@@ -1,0 +1,182 @@
+<html>
+<style>
+    .row {
+        display: flex;
+    }
+
+    .column {
+        flex: 50%;
+        padding: 10px;
+        margin: 10px;
+        background-color: #ffffff;
+        border-style: solid;
+        border-radius: 15px;
+    }
+
+    body {
+        background-color: #888888;
+        font-size: 24px;
+    }
+
+    h1 {
+        padding: 10px;
+        margin: 10px;
+        background-color: #ffffff;
+        font-size: 3em;
+        text-align: center;
+        border-style: solid;
+        border-radius: 15px;
+    }
+
+    h2 {
+        font-size: 2em;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    p {
+        font-size: 0.75em;
+    }
+
+    button {
+        font-size: 0.75em;
+        border-radius: 15px;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    #setup {
+        font-size: 1em;
+    }
+
+    #punchline {
+        font-size: 1em;
+    }
+    
+    #dog {
+    }
+    
+    #art {
+    }
+</style>
+
+<head>
+    <title>Show Me Something</title>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+
+<body>
+    <h1>Show Me...</h1>
+    <div class="row">
+        <div class="column">
+            <h2>A Joke</h2>
+            <button onclick="jokeFunction()">New Joke</button>
+            <div id="setup">No setup</div>
+            <p></p>
+            <div id="punchline">No punchline</div>
+        </div>
+        <div class="column">
+            <h2>An Activity</h2>
+            <button onclick="activityFunction()">New Activity</button>
+            <div id="activity">No activity</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <h2>A Dog</h2>
+            <button onclick="dogFunction()">New Dog</button>
+            <div id="dog"></div>
+        </div>
+        <div class="column">
+            <h2>A Piece of Art</h2>
+            <button onclick="artFunction()">New Art</button>
+            <div id="art"></div>
+        </div>
+    </div>
+    <script>
+        // Access api's
+        function jokeFunction() {
+            var myurl = "https://08ad1pao69.execute-api.us-east-1.amazonaws.com/dev/random_joke";
+            console.log(myurl);
+            $.ajax({
+                url: myurl,
+                dataType: "json",
+                success: function(parsed_json) {
+                    console.log(parsed_json);
+                    var first = parsed_json['setup'];
+                    console.log(first);
+                    $("#setup").html(first);
+                    var last = parsed_json['punchline'];
+                    console.log(last);
+                    $("#punchline").html(last);
+                }
+            });
+        }
+
+        function activityFunction() {
+            var newurl = "https://www.boredapi.com/api/activity/";
+            $.ajax({
+                url: newurl,
+                dataType: "json",
+                success: function(parsed_json) {
+                    console.log(parsed_json);
+                    var activity = parsed_json['activity'];
+                    console.log(activity);
+                    $("#activity").html(activity);
+                }
+            });
+        }
+
+        function artFunction() {
+            var myurl = "https://api.harvardartmuseums.org/image?apikey=ec280140-c761-11e8-974c-bd369261cf1b"
+            console.log(myurl);
+
+            $.ajax({
+                url: myurl,
+                dataType: "json",
+                success: function(parsed_json) {
+                    console.log(parsed_json);
+
+                    console.log(parsed_json['info']);
+                    console.log(parsed_json['info']['totalrecords']);
+                    var randomImageID = Math.floor(Math.random() * parsed_json['info']['totalrecords']);
+                    console.log(randomImageID);
+                    var imageurl = "https://api.harvardartmuseums.org/image/" + randomImageID + "?apikey=ec280140-c761-11e8-974c-bd369261cf1b";
+                    // ?apikey=ec280140-c761-11e8-974c-bd369261cf1b/
+                    console.log(imageurl);
+                    $.ajax({
+                        url: imageurl,
+                        dataType: "json",
+                        success: function(parsed_json) {
+                            console.log(parsed_json);
+
+                            var artwork = "<img src=" + parsed_json['baseimageurl'] + " style='height:400px'>";
+                            console.log(artwork);
+                            $("#art").html(artwork);
+                        }
+                    })
+                }
+            })
+        }
+
+        function dogFunction() {
+            var myurl = "https://dog.ceo/api/breeds/image/random";
+            console.log(myurl);
+            $.ajax({
+                url: myurl,
+                dataType: "json",
+                success: function(parsed_json) {
+                    console.log(parsed_json);
+                    var image = parsed_json['message']
+                    console.log(image);
+                    var link = "<img src=" + image + " style='height:400px'>";
+                    $("#dog").html(link);
+
+                }
+
+            });
+        }
+    </script>
+</body>
+
+</html>
